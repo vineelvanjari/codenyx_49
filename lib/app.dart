@@ -5,6 +5,10 @@ import 'features/splash/splash_screen.dart';
 import 'features/idea_input/idea_input_screen.dart';
 import 'features/chat/chat_screen.dart';
 import 'features/summary/summary_screen.dart';
+import 'features/auth/auth_gate.dart';
+import 'features/startup/startup_dashboard.dart';
+import 'features/investor/investor_feed.dart';
+import 'features/developer/gig_board.dart';
 
 /// App shell — MaterialApp with routing and theme.
 ///
@@ -23,8 +27,9 @@ class VicharaneApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // ── Theme ──
-      theme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
 
       // ── Routes ──
       initialRoute: '/',
@@ -33,6 +38,10 @@ class VicharaneApp extends StatelessWidget {
         '/idea-input': (context) => const IdeaInputScreen(),
         '/chat': (context) => const ChatScreen(),
         '/summary': (context) => const SummaryScreen(),
+        '/auth-gate': (context) => const AuthGate(),
+        '/startup': (context) => const StartupDashboard(),
+        '/investor': (context) => const InvestorFeed(),
+        '/developer': (context) => const GigBoard(),
       },
     );
   }

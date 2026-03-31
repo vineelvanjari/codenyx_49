@@ -136,4 +136,126 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        primaryContainer: AppColors.primaryLight,
+        secondary: AppColors.accent,
+        secondaryContainer: AppColors.accent,
+        surface: AppColors.surfaceLightMode,
+        error: AppColors.error,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: AppColors.textPrimaryLightMode,
+        onError: Colors.white,
+      ),
+
+      scaffoldBackgroundColor: AppColors.backgroundLightMode,
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.backgroundLightMode,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.outfit(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimaryLightMode,
+        ),
+        iconTheme: const IconThemeData(color: AppColors.textPrimaryLightMode),
+      ),
+
+      cardTheme: CardThemeData(
+        color: AppColors.surfaceLightMode,
+        elevation: 2,
+        shadowColor: AppColors.glassBorderDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: AppColors.glassBorderDark),
+        ),
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surfaceLighterMode,
+        hintStyle: GoogleFonts.inter(
+          color: AppColors.textMutedLightMode,
+          fontSize: 15,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.glassBorderDark),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.glassBorderDark),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          shadowColor: AppColors.primary.withValues(alpha: 0.3),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: GoogleFonts.outfit(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      textTheme: TextTheme(
+        headlineLarge: GoogleFonts.outfit(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimaryLightMode,
+        ),
+        headlineMedium: GoogleFonts.outfit(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimaryLightMode,
+        ),
+        headlineSmall: GoogleFonts.outfit(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimaryLightMode,
+        ),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimaryLightMode,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textSecondaryLightMode,
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textMutedLightMode,
+        ),
+      ),
+
+      dividerTheme: DividerThemeData(
+        color: AppColors.glassBorderDark,
+        thickness: 1,
+      ),
+    );
+  }
 }

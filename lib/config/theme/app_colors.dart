@@ -25,6 +25,11 @@ class AppColors {
   static const Color surfaceLight = Color(0xFF1F2937);
   static const Color surfaceLighter = Color(0xFF374151);
 
+  // ── Surfaces (Light Mode) ──────────────────────────
+  static const Color backgroundLightMode = Color(0xFFF4F6F8);
+  static const Color surfaceLightMode = Color(0xFFFFFFFF);
+  static const Color surfaceLighterMode = Color(0xFFF9FAFB);
+
   // ── Accent Colors ─────────────────────────────────
   // Emerald → growth, social impact, sustainability
   static const Color accent = Color(0xFF10B981);
@@ -42,10 +47,15 @@ class AppColors {
   static const Color info = Color(0xFF06B6D4);
   static const Color infoLight = Color(0xFF22D3EE);
 
-  // ── Text Colors ───────────────────────────────────
+  // ── Text Colors (Dark Mode) ───────────────────────
   static const Color textPrimary = Color(0xFFF9FAFB);
   static const Color textSecondary = Color(0xFF9CA3AF);
   static const Color textMuted = Color(0xFF6B7280);
+
+  // ── Text Colors (Light Mode) ──────────────────────
+  static const Color textPrimaryLightMode = Color(0xFF111827);
+  static const Color textSecondaryLightMode = Color(0xFF4B5563);
+  static const Color textMutedLightMode = Color(0xFF9CA3AF);
 
   // ── Gradients ─────────────────────────────────────
   static const LinearGradient primaryGradient = LinearGradient(
@@ -70,4 +80,5 @@ class AppColors {
   // Semi-transparent surfaces for glassmorphism cards
   static Color glassWhite = Colors.white.withValues(alpha: 0.05);
   static Color glassBorder = Colors.white.withValues(alpha: 0.1);
+  static Color glassBorderDark = Colors.black.withValues(alpha: 0.1);
 }

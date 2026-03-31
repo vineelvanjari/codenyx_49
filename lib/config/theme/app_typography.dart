@@ -41,6 +41,20 @@ class AppTypography {
   );
 
   // ── Body Text (Inter) ─────────────────────────────
+  static TextStyle bodyLarge = GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xFFF9FAFB),
+    height: 1.6,
+  );
+
+  static TextStyle bodyMedium = GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xFF9CA3AF),
+    height: 1.5,
+  );
+
   static TextStyle body = GoogleFonts.inter(
     fontSize: 15,
     fontWeight: FontWeight.w400,
