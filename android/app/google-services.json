@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "406908570322",
+    "project_id": "impactforge-49",
+    "storage_bucket": "impactforge-49.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406908570322:android:281e495d746f8621f77b0b",
+        "android_client_info": {
+          "package_name": "com.example.codenyx_49"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406908570322-skuqfncsr6bjg3e8fmv0ptjl78dgn0qi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH8adX8_57n02YVV1G3XxsfUGLRy1YafY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406908570322-skuqfncsr6bjg3e8fmv0ptjl78dgn0qi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
