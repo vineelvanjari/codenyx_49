@@ -4,25 +4,15 @@ import '../../config/theme/app_typography.dart';
 import '../../config/constants.dart';
 import '../../core/models/chat_message.dart';
 import '../../core/services/vicharane_engine.dart';
+import '../../core/services/demo_session.dart';
+import '../../core/services/firestore_service.dart';
+import '../../core/models/idea_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'widgets/ai_message_bubble.dart';
 import 'widgets/user_choice_bubble.dart';
 import 'widgets/decision_cards.dart';
 import 'widgets/typing_indicator.dart';
-import 'widgets/phase_progress.dart';
 
-/// Chat screen — the main decision tree conversation experience.
-///
-/// ARCHITECTURE:
-/// - Listens to VicharaneEngine (ChangeNotifier) for state updates
-/// - Renders messages as a scrollable list
-/// - Shows decision cards or text input at the bottom
-/// - Progress bar at the top tracks covered aspects
-///
-/// KEY UX DECISIONS:
-/// 1. Auto-scroll to bottom on new messages
-/// 2. Both option cards AND free text input available
-/// 3. Text input stays visible even when options are shown
-/// 4. When journey completes → shows "View Summary" button
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -49,7 +39,6 @@ class _ChatScreenState extends State<ChatScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      // Get the idea from navigation arguments
       final idea = ModalRoute.of(context)?.settings.arguments as String?;
       if (idea != null && idea.isNotEmpty) {
         _engine.startSession(idea);
@@ -57,11 +46,49 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _onEngineUpdate() {
+  void _onEngineUpdate() async {
     if (mounted) {
       setState(() {});
-      // Auto-scroll to bottom after a short delay (let widgets render first)
+      // Auto-publish if AI triggers complete
+      if (_engine.isComplete && _engine.publishData != null) {
+        _handleAutoPublish();
+      }
       Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+    }
+  }
+
+  Future<void> _handleAutoPublish() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final uid = DemoSession.currentUid ?? user?.uid;
+      
+      if (uid == null) return;
+      
+      final data = _engine.publishData!;
+      
+      final ideaModel = IdeaModel(
+        id: '', // Firestore auto-generates
+        startupUid: uid,
+        title: data['title'] ?? 'My Startup Idea',
+        description: data['description'] ?? 'No description provided yet.',
+        impactScore: data['impact_score'] ?? 50,
+        budgetNeeded: (data['budget_needed'] ?? 0).toDouble(),
+        status: 'published',
+        createdAt: DateTime.now(),
+      );
+
+      await FirestoreService().publishIdea(ideaModel);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('🎉 Your idea has been automatically published to the Investor Feed!'),
+            backgroundColor: Colors.green,
+          )
+        );
+      }
+    } catch (e) {
+      print('Publish error: $e');
     }
   }
 
@@ -97,132 +124,68 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ── App Bar ──
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.psychology_outlined,
-                color: Colors.white,
-                size: 16,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(AppConstants.appName),
-          ],
-        ),
+        title: Text(AppConstants.appName),
         actions: [
-          // Reset button
           IconButton(
-            icon: const Icon(Icons.refresh_outlined, size: 22),
-            tooltip: 'Start over',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  backgroundColor: AppColors.surfaceLight,
-                  title: Text('Start Over?', style: AppTypography.heading3),
-                  content: Text(
-                    'This will clear your current conversation and decisions.',
-                    style: AppTypography.body,
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        _engine.reset();
-                        Navigator.of(context).pushReplacementNamed(
-                          '/idea-input',
-                        );
-                      },
-                      child: Text(
-                        'Reset',
-                        style: TextStyle(color: AppColors.error),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+            icon: const Icon(Icons.handshake_outlined),
+            tooltip: 'Trigger Bargain Scenario',
+            onPressed: () => _engine.triggerBargainScenario(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.publish),
+            tooltip: 'Publish Idea',
+            onPressed: () => _engine.triggerPublishIdea(),
           ),
         ],
       ),
-
       body: Column(
         children: [
-          // ── Progress Bar ──
-          if (_engine.coveredAspects.isNotEmpty || _engine.currentPhaseLabel != null)
-            PhaseProgress(
-              progress: _engine.progress,
-              phaseLabel: _engine.currentPhaseLabel,
-              coveredCount: _engine.coveredAspects.length,
-              totalCount: AppConstants.coreAspects.length,
+          // ── Metrics Bar ──
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: AppColors.surfaceLight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('🟢 Budget Remaining', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text('₹${_engine.budgetRemaining.toStringAsFixed(0)}', style: const TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text('🔵 Effective Value', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text('${_engine.effectiveValue.toStringAsFixed(0)} pts', style: const TextStyle(color: Colors.blueAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                  ],
+                )
+              ],
             ),
-
-          // ── Chat Messages ──
+          ),
+          
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              itemCount: _engine.messages.length +
-                  (_engine.isLoading ? 1 : 0) +
-                  (_engine.currentOptions.isNotEmpty ? 1 : 0) +
-                  (_engine.isComplete ? 1 : 0),
+              padding: const EdgeInsets.all(16),
+              itemCount: _engine.messages.length + (_engine.isLoading ? 1 : 0) + (_engine.currentOptions.isNotEmpty ? 1 : 0),
               itemBuilder: (context, index) {
-                final messages = _engine.messages;
-
-                // ── Render chat messages ──
-                if (index < messages.length) {
-                  final message = messages[index];
+                if (index < _engine.messages.length) {
+                  final message = _engine.messages[index];
                   if (message.type == MessageType.ai) {
-                    return AiMessageBubble(
-                      content: message.content,
-                      animate: index == messages.length - 1,
-                    );
+                    return AiMessageBubble(content: message.content, animate: index == _engine.messages.length - 1);
                   } else {
-                    return UserChoiceBubble(
-                      content: message.content,
-                      animate: index == messages.length - 1,
-                    );
+                    return UserChoiceBubble(content: message.content, animate: index == _engine.messages.length - 1);
                   }
                 }
 
-                // ── Loading indicator ──
-                if (_engine.isLoading &&
-                    index == messages.length) {
-                  return const TypingIndicator();
-                }
+                if (_engine.isLoading && index == _engine.messages.length) return const TypingIndicator();
 
-                // Adjust index for items after messages + loading
-                final adjustedIndex = index -
-                    messages.length -
-                    (_engine.isLoading ? 1 : 0);
-
-                // ── Decision cards ──
-                if (!_engine.isLoading &&
-                    _engine.currentOptions.isNotEmpty &&
-                    adjustedIndex == 0) {
-                  return DecisionCards(
-                    options: _engine.currentOptions,
-                    onSelected: (option) => _engine.selectOption(option),
-                  );
-                }
-
-                // ── Journey complete button ──
-                if (_engine.isComplete) {
-                  return _buildCompletionCard();
+                final adjIndex = index - _engine.messages.length - (_engine.isLoading ? 1 : 0);
+                if (!_engine.isLoading && _engine.currentOptions.isNotEmpty && adjIndex == 0) {
+                  return DecisionCards(options: _engine.currentOptions, onSelected: _engine.selectOption);
                 }
 
                 return const SizedBox.shrink();
@@ -230,184 +193,48 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          // ── Text Input Bar ──
           if (!_engine.isComplete) _buildTextInput(),
+          
+          if (_engine.isComplete)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.dashboard),
+                label: const Text('Return to Dashboard'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            )
         ],
       ),
     );
   }
 
-  /// Text input bar at the bottom — always visible for custom responses.
   Widget _buildTextInput() {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        12,
-        8,
-        12,
-        MediaQuery.of(context).padding.bottom + 8,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          top: BorderSide(color: AppColors.glassBorder),
-        ),
-      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.glassBorder))),
       child: Row(
         children: [
-          // ── Text Field ──
           Expanded(
             child: TextField(
               controller: _textController,
               focusNode: _textFocusNode,
-              style: AppTypography.body.copyWith(fontSize: 14),
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _sendCustomMessage(),
               decoration: InputDecoration(
                 hintText: 'Type your own response...',
                 filled: true,
-                fillColor: AppColors.surfaceLight,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 isDense: true,
               ),
             ),
           ),
-          const SizedBox(width: 8),
-
-          // ── Send Button ──
-          GestureDetector(
-            onTap: _engine.isLoading ? null : _sendCustomMessage,
-            child: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                gradient: _engine.isLoading
-                    ? null
-                    : AppColors.primaryGradient,
-                color: _engine.isLoading
-                    ? AppColors.surfaceLighter
-                    : null,
-                borderRadius: BorderRadius.circular(21),
-              ),
-              child: Icon(
-                Icons.send_rounded,
-                color: _engine.isLoading
-                    ? AppColors.textMuted
-                    : Colors.white,
-                size: 20,
-              ),
-            ),
+          IconButton(
+            icon: Icon(Icons.send_rounded, color: _engine.isLoading ? Colors.grey : AppColors.primary),
+            onPressed: _engine.isLoading ? null : _sendCustomMessage,
           ),
         ],
-      ),
-    );
-  }
-
-  /// Card shown when the decision tree journey is complete.
-  Widget _buildCompletionCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.accent.withValues(alpha: 0.15),
-              AppColors.primary.withValues(alpha: 0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.accent.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              color: AppColors.accent,
-              size: 48,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Journey Complete! 🎉',
-              style: AppTypography.heading3.copyWith(
-                color: AppColors.accentLight,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'You\'ve explored all the key aspects of your social enterprise idea.',
-              style: AppTypography.bodySmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        '/summary',
-                        arguments: _engine,
-                      );
-                    },
-                    icon: const Icon(Icons.summarize_outlined),
-                    label: const Text('View Roadmap'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.accent,
-                      side: const BorderSide(color: AppColors.accent),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      _engine.reset();
-                      Navigator.of(context).pushReplacementNamed(
-                        '/idea-input',
-                      );
-                    },
-                    icon: const Icon(Icons.refresh_outlined),
-                    label: const Text('New Idea'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                      side: BorderSide(color: AppColors.glassBorder),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
