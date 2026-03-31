@@ -109,7 +109,7 @@ class LoginScreen extends StatelessWidget {
               // 1. Startup Demo
               ElevatedButton.icon(
                 icon: Icon(Icons.lightbulb, color: isDark ? Colors.amber : Colors.orange),
-                label: const Text('Login as Startup\nvineelvanjari24@gmail.com', textAlign: TextAlign.center),
+                label: const Text('Login as Startup'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
                   foregroundColor: isDark ? Colors.white : Colors.black87,
@@ -123,7 +123,7 @@ class LoginScreen extends StatelessWidget {
               // 2. Investor Demo
               ElevatedButton.icon(
                 icon: Icon(Icons.monetization_on, color: isDark ? Colors.greenAccent : Colors.green),
-                label: const Text('Login as Investor\nvineelvanjari48@gmail.com', textAlign: TextAlign.center),
+                label: const Text('Login as Investor'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
                   foregroundColor: isDark ? Colors.white : Colors.black87,
@@ -137,7 +137,7 @@ class LoginScreen extends StatelessWidget {
               // 3. Developer Demo
               ElevatedButton.icon(
                 icon: Icon(Icons.code, color: isDark ? Colors.purpleAccent : AppColors.primary),
-                label: const Text('Login as Developer\nvineelvanjari36@gmail.com', textAlign: TextAlign.center),
+                label: const Text('Login as Developer'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
                   foregroundColor: isDark ? Colors.white : Colors.black87,
