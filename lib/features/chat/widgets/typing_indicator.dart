@@ -13,6 +13,8 @@ class TypingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return FadeIn(
       duration: const Duration(milliseconds: 300),
       child: Padding(
@@ -49,14 +51,14 @@ class TypingIndicator extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.surfaceLight,
+                color: isDark ? AppColors.surfaceLight : Colors.white,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
                   topRight: Radius.circular(18),
                   bottomLeft: Radius.circular(18),
                   bottomRight: Radius.circular(18),
                 ),
-                border: Border.all(color: AppColors.glassBorder),
+                border: Border.all(color: isDark ? AppColors.glassBorder : Colors.grey.shade300),
               ),
               child: Shimmer.fromColors(
                 baseColor: AppColors.textMuted,

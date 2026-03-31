@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/services/firestore_service.dart';
 import '../../core/services/demo_session.dart';
+import '../../config/theme/app_colors.dart';
+import '../../config/theme/app_typography.dart';
+import '../../app.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -25,34 +28,62 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A), // Premium Dark App Background
+      backgroundColor: isDark ? AppColors.background : AppColors.backgroundLightMode,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isDark ? Icons.light_mode : Icons.dark_mode,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              appThemeNotifier.value = isDark ? ThemeMode.light : ThemeMode.dark;
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.rocket_launch, size: 80, color: Colors.blueAccent),
+               Icon(
+                 Icons.rocket_launch, 
+                 size: 80, 
+                 color: isDark ? Colors.blueAccent : AppColors.primary
+              ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'ImpactForge',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                style: AppTypography.heading1.copyWith(
+                  fontSize: 32, 
+                  color: isDark ? Colors.white : Colors.black
+                ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Sign in to change the world.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: AppTypography.bodyLarge.copyWith(
+                  fontSize: 16, 
+                  color: isDark ? Colors.grey : AppColors.textSecondaryLightMode
+                ),
               ),
               const SizedBox(height: 40),
               
               // Google Login (Original)
               ElevatedButton.icon(
-                icon: const Icon(Icons.security, size: 24, color: Colors.blueAccent),
+                icon: Icon(Icons.security, size: 24, color: isDark ? Colors.blueAccent : Colors.white),
                 label: const Text('Sign in with Google'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+                  backgroundColor: isDark ? Colors.white : AppColors.primary,
+                  foregroundColor: isDark ? Colors.black : Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
@@ -62,21 +93,26 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               
-              const Divider(color: Colors.white24),
+              Divider(color: isDark ? Colors.white24 : Colors.black12),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 '--- BUG-FREE DEMO LOGIN ---',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber, letterSpacing: 1.5),
+                style: AppTypography.label.copyWith(
+                  fontSize: 12, 
+                  fontWeight: FontWeight.bold, 
+                  color: isDark ? Colors.amber : Colors.orange[800], 
+                  letterSpacing: 1.5
+                ),
               ),
               const SizedBox(height: 20),
 
               // 1. Startup Demo
               ElevatedButton.icon(
-                icon: const Icon(Icons.lightbulb, color: Colors.amber),
+                icon: Icon(Icons.lightbulb, color: isDark ? Colors.amber : Colors.orange),
                 label: const Text('Login as Startup\nvineelvanjari24@gmail.com', textAlign: TextAlign.center),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[900],
-                  foregroundColor: Colors.white,
+                  backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
+                  foregroundColor: isDark ? Colors.white : Colors.black87,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   minimumSize: const Size(double.infinity, 60),
                 ),
@@ -86,11 +122,11 @@ class LoginScreen extends StatelessWidget {
 
               // 2. Investor Demo
               ElevatedButton.icon(
-                icon: const Icon(Icons.monetization_on, color: Colors.greenAccent),
+                icon: Icon(Icons.monetization_on, color: isDark ? Colors.greenAccent : Colors.green),
                 label: const Text('Login as Investor\nvineelvanjari48@gmail.com', textAlign: TextAlign.center),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[900],
-                  foregroundColor: Colors.white,
+                  backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
+                  foregroundColor: isDark ? Colors.white : Colors.black87,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   minimumSize: const Size(double.infinity, 60),
                 ),
@@ -100,11 +136,11 @@ class LoginScreen extends StatelessWidget {
 
               // 3. Developer Demo
               ElevatedButton.icon(
-                icon: const Icon(Icons.code, color: Colors.purpleAccent),
+                icon: Icon(Icons.code, color: isDark ? Colors.purpleAccent : AppColors.primary),
                 label: const Text('Login as Developer\nvineelvanjari36@gmail.com', textAlign: TextAlign.center),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[900],
-                  foregroundColor: Colors.white,
+                  backgroundColor: isDark ? Colors.blueGrey[900] : Colors.white,
+                  foregroundColor: isDark ? Colors.white : Colors.black87,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   minimumSize: const Size(double.infinity, 60),
                 ),

@@ -7,7 +7,7 @@ class AppConstants {
   AppConstants._();
 
   // ── App Info ───────────────────────────────────────
-  static const String appName = 'Vicharane';
+  static const String appName = 'ImpactForge';
   static const String appTagline =
       'Think before you build. Build while you learn.';
 

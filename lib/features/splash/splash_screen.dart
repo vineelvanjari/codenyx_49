@@ -112,13 +112,12 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-
-                  // Sanskrit meaning
+                  // Subtitle meaning
                   FadeIn(
                     delay: const Duration(milliseconds: 800),
                     duration: const Duration(milliseconds: 800),
                     child: Text(
-                      'विचारणे',
+                      'Empowering Social Enterprises',
                       style: AppTypography.subtitle.copyWith(
                         fontSize: 20,
                         color: AppColors.primaryLight,

@@ -57,7 +57,10 @@ class _IdeaInputScreenState extends State<IdeaInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? AppColors.background : AppColors.backgroundLightMode,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -92,7 +95,7 @@ class _IdeaInputScreenState extends State<IdeaInputScreen> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Vicharane Engine',
+                            'ImpactForge Engine',
                             style: AppTypography.label.copyWith(
                               color: AppColors.primaryLight,
                             ),
@@ -107,13 +110,14 @@ class _IdeaInputScreenState extends State<IdeaInputScreen> {
                       style: AppTypography.heading1.copyWith(
                         fontSize: 28,
                         height: 1.3,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Describe your idea and Vicharane will guide you through '
+                      'Describe your idea and ImpactForge will guide you through '
                       'the key decisions every social entrepreneur faces.',
-                      style: AppTypography.bodySmall.copyWith(fontSize: 14),
+                      style: AppTypography.bodySmall.copyWith(fontSize: 14, color: isDark ? Colors.grey : Colors.black87),
                     ),
                   ],
                 ),
@@ -126,16 +130,16 @@ class _IdeaInputScreenState extends State<IdeaInputScreen> {
                 duration: const Duration(milliseconds: 600),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceLight,
+                    color: isDark ? AppColors.surfaceLight : Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.glassBorder),
+                    border: Border.all(color: isDark ? AppColors.glassBorder : Colors.grey.shade300),
                   ),
                   child: TextField(
                     controller: _controller,
                     focusNode: _focusNode,
                     maxLines: 5,
                     maxLength: 500,
-                    style: AppTypography.body,
+                    style: AppTypography.body.copyWith(color: isDark ? Colors.white : Colors.black87),
                     decoration: InputDecoration(
                       hintText:
                           'e.g., "A mobile platform that connects rural artisans '
@@ -227,19 +231,21 @@ class _ExampleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: isDark ? AppColors.surface : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.glassBorder),
+          border: Border.all(color: isDark ? AppColors.glassBorder : Colors.grey.shade300),
         ),
         child: Text(
           text,
-          style: AppTypography.bodySmall.copyWith(fontSize: 13),
+          style: AppTypography.bodySmall.copyWith(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
         ),
       ),
     );

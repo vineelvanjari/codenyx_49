@@ -23,6 +23,8 @@ class AiMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final bubble = Padding(
       padding: const EdgeInsets.only(right: 40, bottom: 8),
       child: Column(
@@ -57,25 +59,25 @@ class AiMessageBubble extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surfaceLight,
+              color: isDark ? AppColors.surfaceLight : Colors.white,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight: Radius.circular(18),
                 bottomLeft: Radius.circular(18),
                 bottomRight: Radius.circular(18),
               ),
-              border: Border.all(color: AppColors.glassBorder),
+              border: Border.all(color: isDark ? AppColors.glassBorder : Colors.grey.shade300),
             ),
             child: MarkdownBody(
               data: content,
               styleSheet: MarkdownStyleSheet(
-                p: AppTypography.chatMessage,
+                p: AppTypography.chatMessage.copyWith(color: isDark ? Colors.white : Colors.black87),
                 strong: AppTypography.chatMessage.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primaryLight,
+                  color: isDark ? AppColors.primaryLight : AppColors.primary,
                 ),
-                listBullet: AppTypography.chatMessage,
-                h3: AppTypography.heading3.copyWith(fontSize: 16),
+                listBullet: AppTypography.chatMessage.copyWith(color: isDark ? Colors.white : Colors.black87),
+                h3: AppTypography.heading3.copyWith(fontSize: 16, color: isDark ? Colors.white : Colors.black87),
               ),
             ),
           ),

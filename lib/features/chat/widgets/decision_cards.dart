@@ -85,6 +85,8 @@ class _OptionCardState extends State<_OptionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
@@ -98,10 +100,10 @@ class _OptionCardState extends State<_OptionCard> {
         decoration: BoxDecoration(
           color: _isPressed
               ? AppColors.primary.withValues(alpha: 0.15)
-              : AppColors.surfaceLight,
+              : (isDark ? AppColors.surfaceLight : Colors.white),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: _isPressed ? AppColors.primary : AppColors.glassBorder,
+            color: _isPressed ? AppColors.primary : (isDark ? AppColors.glassBorder : Colors.grey.shade300),
             width: _isPressed ? 1.5 : 1,
           ),
         ),
@@ -130,7 +132,7 @@ class _OptionCardState extends State<_OptionCard> {
                 children: [
                   Text(
                     widget.option.title,
-                    style: AppTypography.chatOption,
+                    style: AppTypography.chatOption.copyWith(color: isDark ? Colors.white : Colors.black87),
                   ),
                   if (widget.option.description.isNotEmpty) ...[
                     const SizedBox(height: 4),

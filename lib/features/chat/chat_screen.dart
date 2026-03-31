@@ -123,6 +123,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppConstants.appName),
@@ -144,22 +146,22 @@ class _ChatScreenState extends State<ChatScreen> {
           // ── Metrics Bar ──
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: AppColors.surfaceLight,
+            color: isDark ? AppColors.surfaceLight : Colors.blueGrey.shade50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('🟢 Budget Remaining', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                    Text('₹${_engine.budgetRemaining.toStringAsFixed(0)}', style: const TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('🟢 Budget Remaining', style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 12)),
+                    Text('₹${_engine.budgetRemaining.toStringAsFixed(0)}', style: TextStyle(color: isDark ? Colors.greenAccent : Colors.green.shade700, fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text('🔵 Effective Value', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                    Text('${_engine.effectiveValue.toStringAsFixed(0)} pts', style: const TextStyle(color: Colors.blueAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('🔵 Effective Value', style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 12)),
+                    Text('${_engine.effectiveValue.toStringAsFixed(0)} pts', style: TextStyle(color: isDark ? Colors.blueAccent : Colors.blue.shade700, fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 )
               ],
@@ -210,9 +212,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildTextInput() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.glassBorder))),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: isDark ? AppColors.glassBorder : Colors.grey.shade300))),
       child: Row(
         children: [
           Expanded(
@@ -221,9 +225,11 @@ class _ChatScreenState extends State<ChatScreen> {
               focusNode: _textFocusNode,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _sendCustomMessage(),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black87),
               decoration: InputDecoration(
                 hintText: 'Type your own response...',
                 filled: true,
+                fillColor: isDark ? const Color(0xFF1E2640) : Colors.grey.shade200,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 isDense: true,
