@@ -10,6 +10,9 @@ import 'features/startup/startup_dashboard.dart';
 import 'features/investor/investor_feed.dart';
 import 'features/developer/gig_board.dart';
 
+/// Global notifier to track the chosen theme mode (defaults to light).
+final ValueNotifier<ThemeMode> appThemeNotifier = ValueNotifier(ThemeMode.light);
+
 /// App shell — MaterialApp with routing and theme.
 ///
 /// ROUTING:
@@ -22,26 +25,31 @@ class VicharaneApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConstants.appName,
-      debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: appThemeNotifier,
+      builder: (context, currentMode, _) {
+        return MaterialApp(
+          title: AppConstants.appName,
+          debugShowCheckedModeBanner: false,
 
-      // ── Theme ──
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+          // ── Theme ──
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: currentMode,
 
-      // ── Routes ──
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/idea-input': (context) => const IdeaInputScreen(),
-        '/chat': (context) => const ChatScreen(),
-        '/summary': (context) => const SummaryScreen(),
-        '/auth-gate': (context) => const AuthGate(),
-        '/startup': (context) => const StartupDashboard(),
-        '/investor': (context) => const InvestorFeed(),
-        '/developer': (context) => const GigBoard(),
+          // ── Routes ──
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const SplashScreen(),
+            '/idea-input': (context) => const IdeaInputScreen(),
+            '/chat': (context) => const ChatScreen(),
+            '/summary': (context) => const SummaryScreen(),
+            '/auth-gate': (context) => const AuthGate(),
+            '/startup': (context) => const StartupDashboard(),
+            '/investor': (context) => const InvestorFeed(),
+            '/developer': (context) => const GigBoard(),
+          },
+        );
       },
     );
   }

@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../config/theme/app_colors.dart';
 import '../../config/theme/app_typography.dart';
 import 'package:animate_do/animate_do.dart';
+import '../../app.dart';
 
 class InvestorFeed extends StatelessWidget {
   const InvestorFeed({super.key});
@@ -16,6 +17,18 @@ class InvestorFeed extends StatelessWidget {
       appBar: AppBar(
         title: const Text('De-Risked Deal Flow'),
         actions: [
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              appThemeNotifier.value = Theme.of(context).brightness == Brightness.dark
+                  ? ThemeMode.light
+                  : ThemeMode.dark;
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {

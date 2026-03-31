@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
     
     // 3. Navigate straight to the designated Dashboard!
     if (context.mounted) {
-      Navigator.pushReplacementNamed(context, routeName);
+      Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
     }
   }
 

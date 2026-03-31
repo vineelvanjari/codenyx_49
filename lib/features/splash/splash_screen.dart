@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Auto-navigate after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/auth-gate');
+        Navigator.of(context).pushNamedAndRemoveUntil('/auth-gate', (route) => false);
       }
     });
   }
