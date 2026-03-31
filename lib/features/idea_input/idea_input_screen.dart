@@ -114,11 +114,12 @@ class _IdeaInputScreenState extends State<IdeaInputScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      'Describe your idea and ImpactForge will guide you through '
-                      'the key decisions every social entrepreneur faces.',
-                      style: AppTypography.bodySmall.copyWith(fontSize: 14, color: isDark ? Colors.grey : Colors.black87),
-                    ),
+                          Text(
+                            'ImpactForge Engine',
+                            style: AppTypography.label.copyWith(
+                              color: AppColors.primaryLight,
+                            ),
+                          ),
                   ],
                 ),
               ),
